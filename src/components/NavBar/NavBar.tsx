@@ -35,7 +35,7 @@ export const NavBar = () => {
           style={{
             textDecoration: "none",
           }}
-          to="/transactions"
+          to="/repayments"
         >
           <h1> Past Repayments </h1>
         </Link>
