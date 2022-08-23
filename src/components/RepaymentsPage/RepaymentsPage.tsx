@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Paper,
   Table,
@@ -12,13 +12,8 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import styles from "./RepaymentsPage.module.scss";
-
-interface Repayment {
-  _id: string;
-  amount: number;
-  transactionsIncluded: number;
-  recipient: string;
-}
+import { getRepaymentsRequest } from "../../apis/fizz.api";
+import { Repayment } from "../../models/repayments.model";
 
 const headCells = [
   {
@@ -72,36 +67,10 @@ function EnhancedTableHead() {
 }
 
 const RepaymentsPage = () => {
-  const [transactions, setTransactions] = useState<Repayment[]>([]);
+  const [repayments, setRepayments] = useState<Repayment[]>([]);
 
-  // make GET request to fetch transactions
   useEffect(() => {
-    setTransactions([
-      {
-        _id: "1",
-        amount: 15,
-        transactionsIncluded: 10,
-        recipient: "fizz",
-      },
-      {
-        _id: "2",
-        amount: 15,
-        transactionsIncluded: 10,
-        recipient: "user",
-      },
-      {
-        _id: "3",
-        amount: 15,
-        transactionsIncluded: 10,
-        recipient: "user",
-      },
-      {
-        _id: "4",
-        amount: 15,
-        transactionsIncluded: 10,
-        recipient: "user",
-      },
-    ]);
+    getRepaymentsRequest().then((res) => setRepayments(res.data.body));
   }, []);
 
   return (
@@ -118,7 +87,7 @@ const RepaymentsPage = () => {
                 <EnhancedTableHead />
 
                 <TableBody>
-                  {transactions.map((repayment, index) => {
+                  {repayments.map((repayment, index) => {
                     return (
                       <TableRow
                         hover

@@ -1,16 +1,36 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 import styles from "./NavBar.module.scss";
+import {
+  addRepaymentRequest,
+  getSpendinglimitRequest,
+} from "../../apis/fizz.api";
 
 export const NavBar = () => {
+  const [spendingLimit, setSpendingLimit] = useState(undefined);
+
   const onSubmitRepaymentClick = () => {
-    console.log("submit repayment clicked");
+    addRepaymentRequest().then((res) => {
+      if (res.data.statusCode !== 400) {
+        window.location.reload();
+      } else {
+        console.error(res.data.body.error);
+      }
+    });
   };
+
+  useEffect(() => {
+    getSpendinglimitRequest().then((res) =>
+      setSpendingLimit(res.data.body.limit)
+    );
+  }, []);
 
   return (
     <div className={styles.navbar}>
-      <div className={styles.logo}></div>
+      <div className={styles.logo}>
+        <p> {spendingLimit}</p>
+      </div>
 
       <div className={styles.menu}>
         <Link

@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import styles from "./MakePurchasePage.module.scss";
+import { addTransactionRequest } from "../../apis/fizz.api";
 
 export const MakePurchasePage = () => {
   const [amount, setAmount] = useState("");
   const [title, setTitle] = useState("");
 
   const onPurchaseButtonClick = () => {
-    console.log(title);
-    console.log(amount);
+    addTransactionRequest(title, "purchase", Number.parseFloat(amount)).then(
+      (res) => {
+        if (res.data.statusCode === 200) {
+          window.location.reload();
+        } else {
+          console.error(res.data.body.error);
+        }
+      }
+    );
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Paper,
   Table,
@@ -13,15 +13,12 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import styles from "./TransactionsPage.module.scss";
-
-interface Transaction {
-  _id: string;
-  title: string;
-  type: string;
-  amount: number;
-  repaid: boolean;
-  issuedRefund?: boolean;
-}
+import {
+  addTransactionRequest,
+  getTransactionsRequest,
+  refundTransactionRequest,
+} from "../../apis/fizz.api";
+import { Transaction } from "../../models/transactions.model";
 
 const headCells = [
   {
@@ -87,43 +84,15 @@ function EnhancedTableHead() {
 const TransactionsPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  // make GET request to fetch transactions
   useEffect(() => {
-    setTransactions([
-      {
-        _id: "1",
-        title: "fizz debit card",
-        type: "refund",
-        amount: 15,
-        repaid: false,
-      },
-      {
-        _id: "2",
-        title: "fizz debit card",
-        type: "purchase",
-        amount: 15,
-        repaid: false,
-        issuedRefund: true,
-      },
-      {
-        _id: "3",
-        title: "fizz debit card",
-        type: "purchase",
-        amount: 0,
-        repaid: false,
-      },
-      {
-        _id: "4",
-        title: "fizz debit card",
-        type: "purchase",
-        amount: 0.72,
-        repaid: true,
-      },
-    ]);
+    getTransactionsRequest().then((res) => setTransactions(res.data.body));
   }, []);
 
-  const onRefundTransactionClick = (transactionId: string) => {
-    console.log("Refunding transaction with id:", transactionId);
+  const onRefundTransactionClick = (transaction: Transaction) => {
+    console.log("Refunding transaction with id:", transaction._id);
+    refundTransactionRequest(transaction._id, { issuedRefund: true });
+    addTransactionRequest(transaction.title, "refund", transaction.amount);
+    window.location.reload();
   };
 
   return (
@@ -180,7 +149,7 @@ const TransactionsPage = () => {
                             <Button
                               variant="outlined"
                               onClick={() =>
-                                onRefundTransactionClick(transaction._id)
+                                onRefundTransactionClick(transaction)
                               }
                               sx={{
                                 height: 30,
