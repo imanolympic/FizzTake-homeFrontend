@@ -90,9 +90,13 @@ const TransactionsPage = () => {
 
   const onRefundTransactionClick = (transaction: Transaction) => {
     console.log("Refunding transaction with id:", transaction._id);
-    refundTransactionRequest(transaction._id, { issuedRefund: true });
-    addTransactionRequest(transaction.title, "refund", transaction.amount);
-    window.location.reload();
+    refundTransactionRequest(transaction._id, { issuedRefund: true }).then(() =>
+      addTransactionRequest(
+        transaction.title,
+        "refund",
+        transaction.amount
+      ).then(() => window.location.reload())
+    );
   };
 
   return (
